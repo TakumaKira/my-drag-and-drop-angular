@@ -8,7 +8,9 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          command: npm run test:circle-ci
+        command: npm run test:circle-ci
+      - run:
+        command: npm run e2e:circle-ci
 orbs:
   node: circleci/node@4.1.0
 version: 2.1
