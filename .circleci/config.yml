@@ -1,0 +1,33 @@
+jobs:
+  test:
+    docker:
+      - image: circleci/node:14.15.1-browsers
+        environment:
+          CHROME_BIN: "/usr/bin/google-chrome"
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run test:circle-ci
+      - run:
+          command: npm run e2e:circle-ci
+  deploy_dev:
+    docker:
+      - image: circleci/node:14.15.1
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: build
+          command: npm run build
+      - run:
+          name: deploy to Firebase Hosting
+          command: ./node_modules/.bin/firebase deploy --project my-drag-and-drop-angular --token=$FIREBASE_TOKEN
+orbs:
+  node: circleci/node@4.1.0
+version: 2.1
+workflows:
+  test_and_deploy:
+    jobs:
+      - test
+      - deploy_dev

@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "my-drag-and-drop-angular",
+    "my-drag-and-drop-angular": "my-drag-and-drop-angular"
+  }
+}
