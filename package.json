@@ -8,7 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "test:circle-ci": "ng test --no-watch --no-progress --browsers ChromeHeadlessCI"
+    "test:circle-ci": "ng test --no-watch --no-progress --browsers ChromeHeadlessCI",
+    "e2e:circle-ci": "ng e2e --protractor-config=e2e/protractor-ci.conf.js"
   },
   "private": true,
   "dependencies": {
