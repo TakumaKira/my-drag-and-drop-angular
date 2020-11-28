@@ -22,7 +22,7 @@ jobs:
           command: npm run build
       - run:
           name: deploy to Firebase Hosting
-          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
+          command: ./node_modules/.bin/firebase deploy --project my-drag-and-drop-angular --token=$FIREBASE_TOKEN
 orbs:
   node: circleci/node@4.1.0
 version: 2.1
