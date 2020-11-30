@@ -34,7 +34,6 @@ export class UnsplashService {
   private fetch(): void {
     this.http.get(this.unsplashApiUrl).pipe(
       catchError(error => this.handleError(error)),
-      tap(data => console.log(data)),
       tap(data => this.setToLocalStorage({ data, timestamp: new Date().getTime() })),
       tap(() => this.isStoredSubject.next(true)),
     ).subscribe();
