@@ -5,3 +5,16 @@
   background-size: cover;
   background-position: 50% 50%;
 }
+
+.credit {
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  font-family: sans-serif;
+  font-size: 13px;
+  color: hsl(0deg 0% 40%);
+
+  a {
+    color: inherit;
+  }
+}
