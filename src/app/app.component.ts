@@ -1,6 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { UnsplashService } from './services/unsplash.service';
 
 @Component({
   selector: 'app-root',
@@ -9,28 +8,14 @@ import { tap } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
   @HostBinding('style.backgroundImage') backgroundImage = '';
-  private bgImgData: any;
+  bgImgData: any;
   constructor(
-    private http: HttpClient,
+    public unsplash: UnsplashService,
   ) {}
   ngOnInit(): void {
-    this.getBgImgData();
-  }
-  private getBgImgData(): void {
-    const bgImgDataStr = localStorage.getItem('bgImgData');
-    if (bgImgDataStr) {
-      this.bgImgData = JSON.parse(bgImgDataStr);
-      this.setBgImg();
-    } else {
-      const unsplashApiUrl = `https://api.unsplash.com/photos/random?client_id=${process.env.UNSPLASH_ACCESS_KEY}`;
-      this.http.get(unsplashApiUrl).pipe(
-        tap(res => localStorage.setItem('bgImgData', JSON.stringify(res))),
-        tap(res => this.bgImgData = res),
-        tap(() => this.setBgImg()),
-      ).subscribe();
-    }
-  }
-  private setBgImg(): void {
-    this.backgroundImage = `url("${this.bgImgData.urls.full}")`;
+    this.unsplash.getBgImgData().subscribe(bgImgData => {
+      this.bgImgData = bgImgData;
+      this.backgroundImage = `url("${this.bgImgData.urls.full}")`;
+    });
   }
 }
