@@ -1,16 +1,18 @@
 import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { AppComponent } from './app.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { UnsplashService } from './services/unsplash.service';
 
 describe('AppComponent', () => {
+  let mockUnsplashService;
   beforeEach(async () => {
+    mockUnsplashService = jasmine.createSpyObj(['getBgImgData']);
+    mockUnsplashService.getBgImgData.and.returnValue(of(null));
     await TestBed.configureTestingModule({
       declarations: [
         AppComponent
       ],
-      imports: [
-        HttpClientTestingModule,
-      ],
+      providers: [ { provide: UnsplashService, useValue: mockUnsplashService } ]
     }).compileComponents();
   });
 
