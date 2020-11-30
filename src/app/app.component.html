@@ -1,0 +1,6 @@
+<p
+  *ngIf="bgImgData"
+  class="credit"
+>
+  Photo by <a [href]="unsplash.unsplashUrl + '@' + bgImgData.user.username + unsplash.query">{{bgImgData.user.name}}</a> on <a [href]="unsplash.unsplashUrl + unsplash.query">Unsplash</a>
+</p>
