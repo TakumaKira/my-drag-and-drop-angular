@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, first, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, filter, first, map, tap } from 'rxjs/operators';
+import { FALLBACK_BG_IMG_DATA } from '../constants/fallback-bg-img';
 
 @Injectable({
   providedIn: 'root'
@@ -32,9 +33,26 @@ export class UnsplashService {
   }
   private fetch(): void {
     this.http.get(this.unsplashApiUrl).pipe(
+      catchError(error => this.handleError(error)),
+      tap(data => console.log(data)),
       tap(data => this.setToLocalStorage({ data, timestamp: new Date().getTime() })),
       tap(() => this.isStoredSubject.next(true)),
     ).subscribe();
+  }
+  private handleError(error: HttpErrorResponse): any {
+    // client error or network error
+    if (error.error instanceof ErrorEvent) {
+      console.error('An error occurred:', error.error.message);
+    // server error
+    } else {
+      console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error}`);
+    }
+    // set fallback image data
+    console.warn('Using fallback image data...');
+    this.setToLocalStorage({ data: FALLBACK_BG_IMG_DATA, timestamp: new Date().getTime() });
+    this.isStoredSubject.next(true);
+    // return error message
+    return throwError('Something bad happened; please try again later.');
   }
   getBgImgData(): Observable<any> {
     return this.isStoredSubject.asObservable().pipe(
