@@ -9,6 +9,7 @@ import { UnsplashService } from './services/unsplash.service';
 export class AppComponent implements OnInit {
   @HostBinding('style.backgroundImage') backgroundImage = '';
   bgImgData: any;
+  lists: any[] = ['a', 'b', 'c'];
   constructor(
     public unsplash: UnsplashService,
   ) {}
