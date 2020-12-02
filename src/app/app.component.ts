@@ -1,5 +1,4 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import Bugsnag from '@bugsnag/js';
 import { UnsplashService } from './services/unsplash.service';
 
 @Component({
@@ -19,8 +18,6 @@ export class AppComponent implements OnInit {
       this.bgImgData = bgImgData;
       this.backgroundImage = `url("${this.bgImgData.urls.full}")`;
     });
-
-    setTimeout(() => Bugsnag.notify(new Error('Test Error')), 1000);
   }
   addList(): void {
     this.lists.push({ title: 'New List', cards: [] });
