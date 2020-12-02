@@ -1,3 +1,23 @@
+<div
+  *ngFor="let list of lists; let i = index"
+  class="list"
+>
+  <div>{{ list.title }}</div>
+  <div
+    *ngFor="let card of list.cards"
+  >{{ card }}</div>
+  <div
+    (click)="addCard(i)"
+  >Add Card</div>
+</div>
+
+<div
+  class="list add"
+  (click)="addList()"
+>
+  Add List
+</div>
+
 <p
   *ngIf="bgImgData"
   class="credit"
