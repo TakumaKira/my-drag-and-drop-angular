@@ -29,7 +29,11 @@ export class AppComponent implements OnInit {
     const elem = e.target as HTMLElement;
     const { textContent } = elem;
     if (!textContent) {
-      elem.textContent = this.lists[i].title;
+      if (confirm('Are you sure you want to delete this list?')) {
+        this.lists.splice(i, 1);
+      } else {
+        elem.textContent = this.lists[i].title;
+      }
       return;
     }
     this.lists[i].title = textContent;
@@ -38,7 +42,11 @@ export class AppComponent implements OnInit {
     const elem = e.target as HTMLElement;
     const { textContent } = elem;
     if (!textContent) {
-      elem.textContent = this.lists[i].cards[j];
+      if (confirm('Are you sure you want to delete this card?')) {
+        this.lists[i].cards.splice(j, 1);
+      } else {
+        elem.textContent = this.lists[i].cards[j];
+      }
       return;
     }
     this.lists[i].cards[j] = textContent;
