@@ -9,7 +9,7 @@ import { UnsplashService } from './services/unsplash.service';
 export class AppComponent implements OnInit {
   @HostBinding('style.backgroundImage') backgroundImage = '';
   bgImgData: any;
-  lists: any[] = [{ title: 'a', cards: ['aa', 'ab', 'ac'] }, { title: 'b', cards: ['ba', 'bb'] }, { title: 'c', cards: ['ca'] }];
+  lists: any[] = [{ title: 'A', cards: ['aa', 'ab', 'ac'] }, { title: 'B', cards: ['ba', 'bb'] }, { title: 'C', cards: ['ca'] }];
   constructor(
     public unsplash: UnsplashService,
   ) {}
@@ -24,5 +24,23 @@ export class AppComponent implements OnInit {
   }
   addCard(listIndex: number): void {
     this.lists[listIndex].cards.push('New Card');
+  }
+  updateListTitle(e: Event, i: number): void {
+    const elem = e.target as HTMLElement;
+    const { textContent } = elem;
+    if (!textContent) {
+      elem.textContent = this.lists[i].title;
+      return;
+    }
+    this.lists[i].title = textContent;
+  }
+  updateCard(e: Event, i: number, j: number): void {
+    const elem = e.target as HTMLElement;
+    const { textContent } = elem;
+    if (!textContent) {
+      elem.textContent = this.lists[i].cards[j];
+      return;
+    }
+    this.lists[i].cards[j] = textContent;
   }
 }
