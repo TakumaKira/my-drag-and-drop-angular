@@ -2,9 +2,14 @@
   *ngFor="let list of lists; let i = index"
   class="list"
 >
-  <div>{{ list.title }}</div>
   <div
-    *ngFor="let card of list.cards"
+    contenteditable
+    (focusout)="updateListTitle($event,i)"
+  >{{ list.title }}</div>
+  <div
+    *ngFor="let card of list.cards; let j = index"
+    contenteditable
+    (focusout)="updateCard($event,i,j)"
   >{{ card }}</div>
   <div
     (click)="addCard(i)"
