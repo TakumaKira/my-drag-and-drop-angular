@@ -10,6 +10,23 @@
   background-attachment: fixed;
 }
 
+.list-wrapper {
+  height: 100vh;
+
+  .list {
+    width: 250px;
+    margin: 50px 25px;
+    background-color: red;
+  }
+
+  &:first-of-type .list {
+    margin-left: 50px;
+  }
+  &:last-of-type .list {
+    margin-right: 50px;
+  }
+}
+
 .credit {
   position: absolute;
   bottom: 0;
@@ -21,17 +38,5 @@
 
   a {
     color: inherit;
-  }
-}
-
-.list {
-  position: relative;
-  margin-left: 5vh;
-  width: 250px;
-  height: 90vh;
-  background-color: red;
-
-  &.add {
-    margin-right: 5vh;
   }
 }

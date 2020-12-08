@@ -23,6 +23,8 @@
     "@angular/router": "~11.0.1",
     "@bugsnag/js": "^7.5.1",
     "@bugsnag/plugin-angular": "^7.5.1",
+    "@types/lodash": "^4.14.165",
+    "lodash": "^4.17.20",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
