@@ -1,31 +1,42 @@
-<div
-  *ngFor="let list of lists; let i = index"
-  class="list"
->
-  <div
-    contenteditable
-    (focusout)="updateListTitle($event,i)"
-  >{{ list.title }}</div>
-  <div
-    *ngFor="let card of list.cards; let j = index"
-    contenteditable
-    (focusout)="updateCard($event,i,j)"
-  >{{ card }}</div>
-  <div
-    (click)="addCard(i)"
-  >Add Card</div>
-</div>
-
-<div
-  class="list add"
-  (click)="addList()"
->
-  Add List
-</div>
-
 <p
   *ngIf="bgImgData"
   class="credit"
 >
   Photo by <a [href]="unsplash.unsplashUrl + '@' + bgImgData.user.username + unsplash.query">{{bgImgData.user.name}}</a> on <a [href]="unsplash.unsplashUrl + unsplash.query">Unsplash</a>
 </p>
+
+<div
+  *ngFor="let list of lists; let i = index; trackBy: trackByItems"
+  class="list-wrapper"
+  (dragenter)="onDragEnterList(i)"
+>
+  <div
+    [id]="'list-'+i"
+    class="list"
+    draggable="true"
+    (dragstart)="onDragStartList(i)"
+  >
+    <div
+      contenteditable
+      (focusout)="updateListTitle($event,i)"
+    >{{ list.title }}</div>
+    <div
+      *ngFor="let card of list.cards; let j = index"
+      contenteditable
+      draggable="true"
+      (focusout)="updateCard($event,i,j)"
+    >{{ card }}</div>
+    <div
+      (click)="addCard(i)"
+    >Add Card</div>
+  </div>
+</div>
+
+<div class="list-wrapper">
+  <div
+    class="list add"
+    (click)="addList()"
+  >
+    Add List
+  </div>
+</div>
