@@ -52,6 +52,9 @@ export class AppComponent implements OnInit {
     this.listsBeforeMoved = cloneDeep(this.lists);
   }
   onDragEnterList(i: number): void {
+    if (this.draggingCard && this.lists[i].cards.length === 0) {
+      this.onDragEnterCard(i, 0);
+    }
     if (this.draggingCard) { return; }
     this.lists = cloneDeep(this.listsBeforeMoved) as IList[];
     const moved = this.lists.splice((this.draggingList as number), 1)[0];
