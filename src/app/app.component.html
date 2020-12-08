@@ -24,6 +24,8 @@
       *ngFor="let card of list.cards; let j = index"
       contenteditable
       draggable="true"
+      (dragstart)="onDragStartCard(i,j)"
+      (dragenter)="onDragEnterCard(i,j)"
       (focusout)="updateCard($event,i,j)"
     >{{ card }}</div>
     <div

@@ -11,15 +11,15 @@ export class AppComponent implements OnInit {
   @HostBinding('style.backgroundImage') backgroundImage = '';
   bgImgData: any;
   lists: IList[] = [
-    { title: 'A', cards: ['aa'] },
+    { title: 'A', cards: ['aa', 'ab', 'ac', 'ad', 'ae'] },
     { title: 'B', cards: ['ba'] },
     { title: 'C', cards: ['ca'] },
     { title: 'D', cards: ['da'] },
     { title: 'E', cards: ['ea'] },
   ];
   listsBeforeMoved: IList[] | null = null;
-  dragging: number | null = null;
-  entering: number | null = null;
+  draggingList: number | null = null;
+  draggingCard: number[] | null = null;
   constructor(
     public unsplash: UnsplashService,
     private el: ElementRef<HTMLElement>,
@@ -32,9 +32,6 @@ export class AppComponent implements OnInit {
   }
   addList(): void {
     this.lists.push({ title: 'New List', cards: [] });
-  }
-  addCard(listIndex: number): void {
-    this.lists[listIndex].cards.push('New Card');
   }
   updateListTitle(e: Event, i: number): void {
     const elem = e.target as HTMLElement;
@@ -49,6 +46,20 @@ export class AppComponent implements OnInit {
     }
     this.lists[i].title = textContent;
   }
+  onDragStartList(i: number): void {
+    if (this.draggingCard) { return; }
+    this.draggingList = i;
+    this.listsBeforeMoved = cloneDeep(this.lists);
+  }
+  onDragEnterList(i: number): void {
+    if (this.draggingCard) { return; }
+    this.lists = cloneDeep(this.listsBeforeMoved) as IList[];
+    const moved = this.lists.splice((this.draggingList as number), 1)[0];
+    this.lists.splice(i, 0, moved);
+  }
+  addCard(listIndex: number): void {
+    this.lists[listIndex].cards.push('New Card');
+  }
   updateCard(e: Event, i: number, j: number): void {
     const elem = e.target as HTMLElement;
     const { textContent } = elem;
@@ -62,15 +73,14 @@ export class AppComponent implements OnInit {
     }
     this.lists[i].cards[j] = textContent;
   }
-  onDragStartList(i: number): void {
-    this.dragging = i;
+  onDragStartCard(i: number, j: number): void {
+    this.draggingCard = [i, j];
     this.listsBeforeMoved = cloneDeep(this.lists);
   }
-  onDragEnterList(i: number): void {
-    this.entering = i;
+  onDragEnterCard(i: number, j: number): void {
     this.lists = cloneDeep(this.listsBeforeMoved) as IList[];
-    const moved = this.lists.splice((this.dragging as number), 1)[0];
-    this.lists.splice(i, 0, moved);
+    const moved = this.lists[(this.draggingCard as number[])[0]].cards.splice((this.draggingCard as number[])[1], 1)[0];
+    this.lists[i].cards.splice(j, 0, moved);
   }
   @HostListener('dragover', ['$event'])
   onDragOverList(e: DragEvent): void {
@@ -78,8 +88,8 @@ export class AppComponent implements OnInit {
   }
   @HostListener('dragend')
   onDragEndList(): void {
-    this.dragging = null;
-    this.entering = null;
+    this.draggingList = null;
+    this.draggingCard = null;
     this.listsBeforeMoved = null;
   }
   trackByItems(index: number, item: IList): number {
