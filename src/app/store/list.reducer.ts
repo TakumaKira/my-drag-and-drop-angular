@@ -13,7 +13,7 @@ export interface Lists extends EntityState<List> {
 
 export const adapter: EntityAdapter<List> = createEntityAdapter<List>();
 
-const initialState: Lists = adapter.getInitialState({
+export const initialState: Lists = adapter.getInitialState({
   // additional entity state properties
 });
 

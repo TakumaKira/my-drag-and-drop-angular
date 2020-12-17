@@ -7,7 +7,7 @@ export interface BgImgData {
 
 }
 
-const initialState: BgImgData = {
+export const initialState: BgImgData = {
 
 };
 

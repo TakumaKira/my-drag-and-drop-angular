@@ -13,7 +13,7 @@ export interface OrderList {
   cardIds: string[];
 }
 
-const initialState: Order = {
+export const initialState: Order = {
   lists: [],
 };
 

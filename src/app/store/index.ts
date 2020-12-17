@@ -15,6 +15,13 @@ export interface State {
   [orderFeatureKey]: Order;
 }
 
+export const initialState: State = {
+  bgImgData: {},
+  lists: { ids: [], entities: {} },
+  cards: { ids: [], entities: {} },
+  order: { lists: [] },
+};
+
 export const reducers: ActionReducerMap<State> = {
   [bgImgDataFeatureKey]: bgImgDataReducer,
   [listsFeatureKey]: listsReducer,

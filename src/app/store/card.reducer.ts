@@ -13,7 +13,7 @@ export interface Cards extends EntityState<Card> {
 
 export const adapter: EntityAdapter<Card> = createEntityAdapter<Card>();
 
-const initialState: Cards = adapter.getInitialState({
+export const initialState: Cards = adapter.getInitialState({
   // additional entity state properties
 });
 
