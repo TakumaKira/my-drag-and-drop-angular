@@ -130,5 +130,8 @@
       }
     }
   },
-  "defaultProject": "my-drag-and-drop-angular"
+  "defaultProject": "my-drag-and-drop-angular",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }

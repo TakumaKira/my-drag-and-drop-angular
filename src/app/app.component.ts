@@ -1,6 +1,18 @@
-import { Component, ElementRef, HostBinding, HostListener, OnInit } from '@angular/core';
+import { Component, HostBinding, HostListener, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import isEqual from 'lodash/isEqual';
+import { Observable } from 'rxjs';
+import { distinctUntilChanged, filter, first, map } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
+
 import { UnsplashService } from './services/unsplash.service';
-import cloneDeep from 'lodash/cloneDeep';
+import { State } from './store';
+import * as CardActions from './store/card.actions';
+import { Card } from './store/card.model';
+import * as ListActions from './store/list.actions';
+import { List } from './store/list.model';
+import * as OrderActions from './store/order.actions';
+import { OrderList } from './store/order.reducer';
 
 @Component({
   selector: 'app-root',
@@ -10,20 +22,18 @@ import cloneDeep from 'lodash/cloneDeep';
 export class AppComponent implements OnInit {
   @HostBinding('style.backgroundImage') backgroundImage = '';
   bgImgData: any;
-  lists: IList[] = [
-    { title: 'A', cards: ['aa', 'ab', 'ac', 'ad', 'ae'] },
-    { title: 'B', cards: ['ba'] },
-    { title: 'C', cards: ['ca'] },
-    { title: 'D', cards: ['da'] },
-    { title: 'E', cards: ['ea'] },
-  ];
-  listsBeforeMoved: IList[] | null = null;
   draggingList: number | null = null;
-  draggingCard: number[] | null = null;
+  draggingCard: [number, number] | null = null;
+  orderList$: Observable<OrderList[]>;
   constructor(
     public unsplash: UnsplashService,
-    private el: ElementRef<HTMLElement>,
-  ) {}
+    private store: Store<State>,
+  ) {
+    this.orderList$ = this.store.pipe(
+      map(state => state.order.lists),
+      distinctUntilChanged(isEqual),
+    );
+  }
   ngOnInit(): void {
     this.unsplash.getBgImgData().subscribe(bgImgData => {
       this.bgImgData = bgImgData;
@@ -31,59 +41,72 @@ export class AppComponent implements OnInit {
     });
   }
   addList(): void {
-    this.lists.push({ title: 'New List', cards: [] });
+    this.store.dispatch(ListActions.addList({ listId: uuidv4() }));
   }
   updateListTitle(e: Event, i: number): void {
     const elem = e.target as HTMLElement;
     const { textContent } = elem;
     if (!textContent) {
       if (confirm('Are you sure you want to delete this list?')) {
-        this.lists.splice(i, 1);
+        this.store.pipe(first()).subscribe(state =>
+          this.store.dispatch(ListActions.deleteList({listId: state.order.lists[i].listId})));
       } else {
-        elem.textContent = this.lists[i].title;
+        this.store.pipe(first()).subscribe(state =>
+          elem.textContent = state.lists.entities[state.order.lists[i].listId]?.title as string);
       }
       return;
     }
-    this.lists[i].title = textContent;
+    this.store.pipe(first()).subscribe(state =>
+      this.store.dispatch(ListActions.updateListTitle({ listId: state.order.lists[i].listId, title: textContent })));
   }
-  onDragStartList(i: number): void {
+  onDragStartList(i: number, e: DragEvent): void {
     if (this.draggingCard) { return; }
     this.draggingList = i;
-    this.listsBeforeMoved = cloneDeep(this.lists);
+    ((e.target as HTMLElement).querySelector('.list-title') as HTMLElement).blur();
   }
   onDragEnterList(i: number): void {
-    if (this.draggingCard && this.lists[i].cards.length === 0) {
-      this.onDragEnterCard(i, 0);
-    }
+    this.orderList$.pipe(
+      first(),
+      filter(() => !!this.draggingCard),
+      filter(orderList => orderList[i].cardIds.length === 0),
+    ).subscribe(() => this.onDragEnterCard(i, 0));
+    if (this.draggingList === null) { return; }
     if (this.draggingCard) { return; }
-    this.lists = cloneDeep(this.listsBeforeMoved) as IList[];
-    const moved = this.lists.splice((this.draggingList as number), 1)[0];
-    this.lists.splice(i, 0, moved);
+    if (this.draggingList === i) { return; }
+    this.store.dispatch(OrderActions.moveList({from: (this.draggingList as number), to: i}));
+    this.draggingList = i;
   }
   addCard(listIndex: number): void {
-    this.lists[listIndex].cards.push('New Card');
+    this.store.pipe(first()).subscribe(state =>
+      this.store.dispatch(CardActions.addCard({ cardId: uuidv4(), listId: state.order.lists[listIndex].listId })));
   }
   updateCard(e: Event, i: number, j: number): void {
+    if (this.draggingCard) { return; } // Prevent executing this when starting dragging a card(thus dragged card content remains)
     const elem = e.target as HTMLElement;
     const { textContent } = elem;
     if (!textContent) {
       if (confirm('Are you sure you want to delete this card?')) {
-        this.lists[i].cards.splice(j, 1);
+        this.store.pipe(first()).subscribe(state =>
+          this.store.dispatch(CardActions.deleteCard({listId: state.order.lists[i].listId, cardId: state.order.lists[i].cardIds[j]})));
       } else {
-        elem.textContent = this.lists[i].cards[j];
+        this.store.pipe(first()).subscribe(state =>
+          elem.textContent = state.cards.entities[state.order.lists[i].cardIds[j]]?.content as string);
       }
       return;
     }
-    this.lists[i].cards[j] = textContent;
+    this.store.pipe(first()).subscribe(state =>
+      this.store.dispatch(CardActions.updateCard({ cardId: state.order.lists[i].cardIds[j], contents: textContent })));
   }
-  onDragStartCard(i: number, j: number): void {
+  onDragStartCard(i: number, j: number, e: DragEvent): void {
     this.draggingCard = [i, j];
-    this.listsBeforeMoved = cloneDeep(this.lists);
+    (e.target as HTMLElement).blur();
   }
   onDragEnterCard(i: number, j: number): void {
-    this.lists = cloneDeep(this.listsBeforeMoved) as IList[];
-    const moved = this.lists[(this.draggingCard as number[])[0]].cards.splice((this.draggingCard as number[])[1], 1)[0];
-    this.lists[i].cards.splice(j, 0, moved);
+    if (this.draggingList) { return; }
+    if (this.draggingCard === null) { return; }
+    if ((this.draggingCard as [number, number])[0] === i && (this.draggingCard as [number, number])[1] === j) { return; }
+    this.store.dispatch(OrderActions.moveCard({from: (this.draggingCard as [number, number]), to: [i, j]}));
+    this.draggingCard = [i, j];
   }
   @HostListener('dragover', ['$event'])
   onDragOverList(e: DragEvent): void {
@@ -93,14 +116,24 @@ export class AppComponent implements OnInit {
   onDragEndList(): void {
     this.draggingList = null;
     this.draggingCard = null;
-    this.listsBeforeMoved = null;
   }
-  trackByItems(index: number, item: IList): number {
+  trackByItems(index: number, item: OrderList): number {
     return index;
   }
-}
-
-interface IList {
-  title: string;
-  cards: string[];
+  getListTitle$(listId: string): Observable<string> {
+    return this.store.pipe(
+      first(),
+      map(store => store.lists.entities[listId]),
+      filter(list => !!list),
+      map(list => (list as List).title),
+    );
+  }
+  getCardContent$(cardId: string): Observable<string> {
+    return this.store.pipe(
+      first(),
+      map(store => store.cards.entities[cardId]),
+      filter(card => !!card),
+      map(card => (card as Card).content),
+    );
+  }
 }

@@ -1,10 +1,17 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { ErrorHandler, NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import Bugsnag from '@bugsnag/js';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
+import * as fromState from './store';
+import { CardEffects } from './store/card.effects';
+import { ListEffects } from './store/list.effects';
 
 // configure Bugsnag asap
 Bugsnag.start({ apiKey: process.env.BUGSNAG_API_KEY as string });
@@ -20,6 +27,9 @@ export function errorHandlerFactory(): BugsnagErrorHandler {
   imports: [
     BrowserModule,
     HttpClientModule,
+    StoreModule.forRoot(fromState.reducers, { metaReducers: fromState.metaReducers }),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    EffectsModule.forRoot([ListEffects, CardEffects]),
   ],
   providers: [
     { provide: ErrorHandler, useFactory: errorHandlerFactory },
