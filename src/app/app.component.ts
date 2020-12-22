@@ -13,6 +13,7 @@ import * as ListActions from './store/list.actions';
 import { List } from './store/list.model';
 import * as OrderActions from './store/order.actions';
 import { OrderList } from './store/order.reducer';
+import { IUnsplashImgData } from './types/unsplash-img-data.model';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,7 @@ import { OrderList } from './store/order.reducer';
 })
 export class AppComponent implements OnInit {
   @HostBinding('style.backgroundImage') backgroundImage = '';
-  bgImgData: any;
+  bgImgData: IUnsplashImgData | null = null;
   draggingList: number | null = null;
   draggingCard: [number, number] | null = null;
   orderList$: Observable<OrderList[]>;
@@ -37,7 +38,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.unsplash.getBgImgData().subscribe(bgImgData => {
       this.bgImgData = bgImgData;
-      this.backgroundImage = `url("${this.bgImgData.urls.full}")`;
+      this.backgroundImage = `url("${this.bgImgData?.urls.full}")`;
     });
   }
   addList(): void {

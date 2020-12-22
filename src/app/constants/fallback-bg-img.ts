@@ -1,4 +1,6 @@
-export const FALLBACK_BG_IMG_DATA = {
+import { IUnsplashImgData } from '../types/unsplash-img-data.model';
+
+export const FALLBACK_BG_IMG_DATA: IUnsplashImgData = {
   id: 'opdU5V-jkbQ',
   created_at: '2020-11-19T10:58:56-05:00',
   updated_at: '2020-11-29T18:23:15-05:00',
