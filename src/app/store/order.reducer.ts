@@ -13,13 +13,13 @@ export interface OrderList {
   cardIds: string[];
 }
 
-export const initialState: Order = {
+export const orderInitialState: Order = {
   lists: [],
 };
 
 
 export const orderReducer = createReducer(
-  initialState,
+  orderInitialState,
   on(OrderActions.addList,
     (state, {listId}) => {
       state = copy(state);

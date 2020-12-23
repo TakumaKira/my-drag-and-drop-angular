@@ -1,13 +1,13 @@
-import { cardsReducer, initialState } from './card.reducer';
+import { cardsReducer, cardsInitialState } from './card.reducer';
 
 describe('Card Reducer', () => {
   describe('unknown action', () => {
     it('should return the previous state', () => {
       const action = {} as any;
 
-      const result = cardsReducer(initialState, action);
+      const result = cardsReducer(cardsInitialState, action);
 
-      expect(result).toBe(initialState);
+      expect(result).toBe(cardsInitialState);
     });
   });
 });

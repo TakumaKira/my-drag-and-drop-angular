@@ -13,13 +13,13 @@ export interface Lists extends EntityState<List> {
 
 export const adapter: EntityAdapter<List> = createEntityAdapter<List>();
 
-export const initialState: Lists = adapter.getInitialState({
+export const listsInitialState: Lists = adapter.getInitialState({
   // additional entity state properties
 });
 
 
 export const listsReducer = createReducer(
-  initialState,
+  listsInitialState,
   on(ListActions.addList,
     (state, {listId: id}) => adapter.addOne({id, title: NEW_LIST_TITLE}, state)
   ),

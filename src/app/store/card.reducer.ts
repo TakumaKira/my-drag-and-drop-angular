@@ -13,13 +13,13 @@ export interface Cards extends EntityState<Card> {
 
 export const adapter: EntityAdapter<Card> = createEntityAdapter<Card>();
 
-export const initialState: Cards = adapter.getInitialState({
+export const cardsInitialState: Cards = adapter.getInitialState({
   // additional entity state properties
 });
 
 
 export const cardsReducer = createReducer(
-  initialState,
+  cardsInitialState,
   on(CardActions.addCard,
     (state, {cardId: id}) => adapter.addOne({id, content: NEW_CARD_CONTENTS}, state)
   ),

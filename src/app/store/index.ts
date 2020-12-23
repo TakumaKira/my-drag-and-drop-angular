@@ -3,10 +3,10 @@ import {
   MetaReducer
 } from '@ngrx/store';
 import { environment } from '../../environments/environment';
-import { BgImgData, bgImgDataFeatureKey, bgImgDataReducer } from './bg-img-data.reducer';
-import { Cards, cardsFeatureKey, cardsReducer } from './card.reducer';
-import { Lists, listsFeatureKey, listsReducer } from './list.reducer';
-import { Order, orderFeatureKey, orderReducer } from './order.reducer';
+import { BgImgData, bgImgDataFeatureKey, bgImgDataInitialState, bgImgDataReducer } from './bg-img-data.reducer';
+import { Cards, cardsFeatureKey, cardsInitialState, cardsReducer } from './card.reducer';
+import { Lists, listsFeatureKey, listsInitialState, listsReducer } from './list.reducer';
+import { Order, orderFeatureKey, orderInitialState, orderReducer } from './order.reducer';
 
 export interface State {
   [bgImgDataFeatureKey]: BgImgData;
@@ -16,10 +16,10 @@ export interface State {
 }
 
 export const initialState: State = {
-  bgImgData: {},
-  lists: { ids: [], entities: {} },
-  cards: { ids: [], entities: {} },
-  order: { lists: [] },
+  bgImgData: bgImgDataInitialState,
+  lists: listsInitialState,
+  cards: cardsInitialState,
+  order: orderInitialState,
 };
 
 export const reducers: ActionReducerMap<State> = {
