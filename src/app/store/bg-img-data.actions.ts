@@ -1,15 +1,24 @@
 import { createAction, props } from '@ngrx/store';
+import { IStoredBgImgData } from '../types/stored-bg-img-data';
 
-export const loadBgImgDatas = createAction(
-  '[BgImgData] Load BgImgDatas'
+export const checkLocalStorage = createAction(
+  '[BgImgData] Check Local Storage',
 );
 
-export const loadBgImgDatasSuccess = createAction(
-  '[BgImgData] Load BgImgDatas Success',
-  props<{ data: any }>()
+export const loadBgImgData = createAction(
+  '[BgImgData] Load BgImgData',
 );
 
-export const loadBgImgDatasFailure = createAction(
-  '[BgImgData] Load BgImgDatas Failure',
+export const loadBgImgDataFailure = createAction(
+  '[BgImgData] Load BgImgData Failure',
   props<{ error: any }>()
+);
+
+export const getFallbackBgImgData = createAction(
+  '[BgImgData] Get Fallback BgImgData',
+);
+
+export const gotBgImgData = createAction(
+  '[BgImgData] Got BgImgData',
+  props<IStoredBgImgData>()
 );

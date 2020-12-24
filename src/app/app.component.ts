@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UnsplashService } from './services/unsplash.service';
 import { State } from './store';
+import * as BgImgDataActions from './store/bg-img-data.actions';
 import * as CardActions from './store/card.actions';
 import { Card } from './store/card.model';
 import * as ListActions from './store/list.actions';
@@ -36,10 +37,15 @@ export class AppComponent implements OnInit {
     );
   }
   ngOnInit(): void {
-    this.unsplash.getBgImgData().subscribe(bgImgData => {
+    this.store.pipe(
+      map(state => state.bgImgData.data),
+      filter(bgImgData => !!bgImgData),
+      first(),
+    ).subscribe(bgImgData => {
       this.bgImgData = bgImgData;
       this.backgroundImage = `url("${this.bgImgData?.urls.full}")`;
     });
+    this.store.dispatch(BgImgDataActions.checkLocalStorage());
   }
   addList(): void {
     this.store.dispatch(ListActions.addList({ listId: uuidv4() }));

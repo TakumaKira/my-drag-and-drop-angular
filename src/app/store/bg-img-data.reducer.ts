@@ -1,6 +1,7 @@
-import { Action, createReducer, on } from '@ngrx/store';
+import { createReducer, on } from '@ngrx/store';
 import { IUnsplashImgData } from '../types/unsplash-img-data.model';
 
+import * as BgImgDataActions from './bg-img-data.actions';
 
 export const bgImgDataFeatureKey = 'bgImgData';
 
@@ -14,9 +15,10 @@ export const bgImgDataInitialState: BgImgData = {
   timestamp: null,
 };
 
-
 export const bgImgDataReducer = createReducer(
   bgImgDataInitialState,
-
+  on(BgImgDataActions.gotBgImgData,
+    (state, {data, timestamp}) => ({ data, timestamp })
+  ),
 );
 

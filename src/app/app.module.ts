@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import * as fromState from './store';
 import { CardEffects } from './store/card.effects';
 import { ListEffects } from './store/list.effects';
+import { BgImgDataEffects } from './store/bg-img-data.effects';
 
 // configure Bugsnag asap
 Bugsnag.start({ apiKey: process.env.BUGSNAG_API_KEY as string });
@@ -27,9 +28,9 @@ export function errorHandlerFactory(): BugsnagErrorHandler {
   imports: [
     BrowserModule,
     HttpClientModule,
-    StoreModule.forRoot(fromState.reducers, { metaReducers: fromState.metaReducers }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    EffectsModule.forRoot([ListEffects, CardEffects]),
+    StoreModule.forRoot(fromState.reducers, { metaReducers: fromState.metaReducers }),
+    EffectsModule.forRoot([ListEffects, CardEffects, BgImgDataEffects]),
   ],
   providers: [
     { provide: ErrorHandler, useFactory: errorHandlerFactory },
