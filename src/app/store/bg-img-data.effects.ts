@@ -16,7 +16,7 @@ export class BgImgDataEffects {
     ofType(BgImgData.checkLocalStorage),
     map(() => this.unsplash.checkLocalStorage()),
     mergeMap(result => iif(() =>
-      this.unsplash.isStored(result),
+      this.unsplash.isLocalStored(result),
       of(BgImgData.gotBgImgData(result as IStoredBgImgData)),
       of(BgImgData.loadBgImgData()))
     ),
@@ -24,7 +24,7 @@ export class BgImgDataEffects {
 
   loadBgImgData$ = createEffect(() => this.actions$.pipe(
     ofType(BgImgData.loadBgImgData),
-    mergeMap(() => this.unsplash.get().pipe(
+    mergeMap(() => this.unsplash.fetch().pipe(
       catchError(error => this.unsplash.handleLoadError(error)),
     )),
     map(data => BgImgData.gotBgImgData({ data: data as IUnsplashImgData, timestamp: new Date().getTime() })),
@@ -42,7 +42,7 @@ export class BgImgDataEffects {
 
   gotBgImgData$ = createEffect(() => this.actions$.pipe(
     ofType(BgImgData.gotBgImgData),
-    tap(({type, ...props}) => this.unsplash.setToLocalStorage(props)),
+    tap(({type, ...props}) => this.unsplash.storeLocal(props)),
   ), {dispatch: false});
 
   constructor(

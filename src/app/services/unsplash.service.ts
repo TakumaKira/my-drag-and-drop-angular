@@ -26,13 +26,13 @@ export class UnsplashService {
     const bgImgStr = localStorage.getItem(this.LOCAL_STORAGE_STORE_KEY);
     return !!bgImgStr ? JSON.parse(bgImgStr) as IStoredBgImgData : null;
   }
-  isStored(result: IStoredBgImgData | null): boolean {
-    return result !== null && !this.isExpired(result.timestamp);
+  isLocalStored(result: IStoredBgImgData | null): boolean {
+    return result !== null && !this.storedIsExpired(result.timestamp);
   }
-  private isExpired(timestamp: number): boolean {
+  private storedIsExpired(timestamp: number): boolean {
     return new Date().getTime() - timestamp > this.localstorageLifetime;
   }
-  get(): Observable<IUnsplashImgData> {
+  fetch(): Observable<IUnsplashImgData> {
     return this.http.get(this.unsplashApiUrl) as Observable<IUnsplashImgData>;
   }
   handleLoadError(error: HttpErrorResponse): any {
@@ -48,7 +48,7 @@ export class UnsplashService {
     // return error message
     return throwError('Something bad happened; please try again later.');
   }
-  setToLocalStorage(data: IStoredBgImgData): void {
+  storeLocal(data: IStoredBgImgData): void {
     localStorage.setItem(this.LOCAL_STORAGE_STORE_KEY, JSON.stringify(data));
   }
 }
