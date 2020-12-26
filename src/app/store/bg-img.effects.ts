@@ -14,9 +14,9 @@ export class BgImgEffects {
 
   checkLocalStorage$ = createEffect(() => this.actions$.pipe(
     ofType(BgImgActions.checkLocalStorage),
-    mergeMap(() => this.unsplash.checkLocalStorage()),
+    mergeMap(() => this.unsplash.getStored()),
     mergeMap(result => iif(() =>
-      this.unsplash.isLocalStored(result),
+      this.unsplash.storedIsValid(result),
       of(BgImgActions.gotData(result as BgImg)),
       of(BgImgActions.fetch()))
     ),

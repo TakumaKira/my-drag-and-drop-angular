@@ -22,13 +22,13 @@ export class UnsplashService {
     private http: HttpClient,
     private store: Store<State>,
   ) {}
-  checkLocalStorage(): Observable<BgImg> {
+  getStored(): Observable<BgImg> {
     return this.store.pipe(
       first(),
       map(state => state.bgImg),
     );
   }
-  isLocalStored(result: BgImg): boolean {
+  storedIsValid(result: BgImg): boolean {
     return result?.data !== null && !this.storedIsExpired(result?.timestamp as number);
   }
   private storedIsExpired(timestamp: number): boolean {
