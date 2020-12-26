@@ -1,12 +1,13 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { Observable, throwError } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 
 import { State } from '../store';
 import * as BgImgActions from '../store/bg-img.actions';
 import { BgImg } from '../store/bg-img.reducer';
+import { selectBgImgState } from '../store/bg-img.selectors';
 import { IUnsplashImgData } from '../types/unsplash-img-data.model';
 
 @Injectable({
@@ -25,7 +26,7 @@ export class UnsplashService {
   getStored(): Observable<BgImg> {
     return this.store.pipe(
       first(),
-      map(state => state.bgImg),
+      select(selectBgImgState),
     );
   }
   storedIsValid(result: BgImg): boolean {
