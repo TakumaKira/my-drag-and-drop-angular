@@ -6,28 +6,28 @@
 </p>
 
 <div
-  *ngFor="let list of lists; let i = index; trackBy: trackByItems"
+  *ngFor="let list of orderList$ | async; let i = index; trackBy: trackByItems"
   class="list-wrapper"
   (dragenter)="onDragEnterList(i)"
 >
   <div
-    [id]="'list-'+i"
     class="list"
     draggable="true"
-    (dragstart)="onDragStartList(i)"
+    (dragstart)="onDragStartList(i,$event)"
   >
     <div
+      class="list-title"
       contenteditable
       (focusout)="updateListTitle($event,i)"
-    >{{ list.title }}</div>
+    >{{ getListTitle$(list.listId) | async }}</div>
     <div
-      *ngFor="let card of list.cards; let j = index"
+      *ngFor="let cardId of list.cardIds; let j = index"
       contenteditable
       draggable="true"
-      (dragstart)="onDragStartCard(i,j)"
+      (dragstart)="onDragStartCard(i,j,$event)"
       (dragenter)="onDragEnterCard(i,j)"
       (focusout)="updateCard($event,i,j)"
-    >{{ card }}</div>
+    >{{ getCardContent$(cardId) | async }}</div>
     <div
       (click)="addCard(i)"
     >Add Card</div>

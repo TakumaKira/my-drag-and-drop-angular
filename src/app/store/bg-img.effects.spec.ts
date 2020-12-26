@@ -1,13 +1,16 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { Observable } from 'rxjs';
 
+import { BgImgEffects } from './bg-img.effects';
 import { initialState } from '../store';
-import { UnsplashService } from './unsplash.service';
 
-describe('UnsplashService', () => {
-  let service: UnsplashService;
+describe('BgImgEffects', () => {
+  let actions$: Observable<any>;
   let store: MockStore;
+  let effects: BgImgEffects;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -16,13 +19,15 @@ describe('UnsplashService', () => {
       ],
       providers: [
         provideMockStore({ initialState }),
+        provideMockActions(() => actions$),
+        BgImgEffects,
       ]
     });
-    service = TestBed.inject(UnsplashService);
     store = TestBed.inject(MockStore);
+    effects = TestBed.inject(BgImgEffects);
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(effects).toBeTruthy();
   });
 });

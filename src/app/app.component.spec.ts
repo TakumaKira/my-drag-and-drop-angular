@@ -1,10 +1,15 @@
 import { TestBed } from '@angular/core/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+
 import { AppComponent } from './app.component';
 import { UnsplashService } from './services/unsplash.service';
+import { initialState } from './store';
 
 describe('AppComponent', () => {
   let mockUnsplashService;
+  let store: MockStore;
+
   beforeEach(async () => {
     mockUnsplashService = jasmine.createSpyObj(['getBgImgData']);
     mockUnsplashService.getBgImgData.and.returnValue(of(null));
@@ -12,8 +17,12 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
-      providers: [ { provide: UnsplashService, useValue: mockUnsplashService } ]
+      providers: [
+        { provide: UnsplashService, useValue: mockUnsplashService },
+        provideMockStore({ initialState }),
+      ]
     }).compileComponents();
+    store = TestBed.inject(MockStore);
   });
 
   it('should create the app', () => {
