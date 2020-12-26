@@ -9,12 +9,12 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
+import { LocalstorageService } from './services/localstorage.service';
 import * as fromState from './store';
+import { getMetaReducers } from './store';
+import { BgImgEffects } from './store/bg-img.effects';
 import { CardEffects } from './store/card.effects';
 import { ListEffects } from './store/list.effects';
-import { BgImgDataEffects } from './store/bg-img-data.effects';
-import { getMetaReducers } from './store';
-import { LocalstorageService } from './services/localstorage.service';
 
 // configure Bugsnag asap
 Bugsnag.start({ apiKey: process.env.BUGSNAG_API_KEY as string });
@@ -30,9 +30,9 @@ export function errorHandlerFactory(): BugsnagErrorHandler {
   imports: [
     BrowserModule,
     HttpClientModule,
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     StoreModule.forRoot(fromState.reducers),
-    EffectsModule.forRoot([ListEffects, CardEffects, BgImgDataEffects]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    EffectsModule.forRoot([ListEffects, CardEffects, BgImgEffects]),
   ],
   providers: [
     { provide: ErrorHandler, useFactory: errorHandlerFactory },

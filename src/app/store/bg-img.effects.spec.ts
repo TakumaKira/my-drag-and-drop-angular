@@ -2,21 +2,21 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable } from 'rxjs';
 
-import { BgImgDataEffects } from './bg-img-data.effects';
+import { BgImgEffects } from './bg-img.effects';
 
-describe('BgImgDataEffects', () => {
+describe('BgImgEffects', () => {
   let actions$: Observable<any>;
-  let effects: BgImgDataEffects;
+  let effects: BgImgEffects;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        BgImgDataEffects,
+        BgImgEffects,
         provideMockActions(() => actions$)
       ]
     });
 
-    effects = TestBed.inject(BgImgDataEffects);
+    effects = TestBed.inject(BgImgEffects);
   });
 
   it('should be created', () => {

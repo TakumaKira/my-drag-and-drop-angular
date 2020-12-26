@@ -4,29 +4,30 @@ import {
   ActionReducerMap,
   MetaReducer
 } from '@ngrx/store';
+
 import { environment } from '../../environments/environment';
 import { LocalstorageService } from '../services/localstorage.service';
-import { BgImgData, bgImgDataFeatureKey, bgImgDataInitialState, bgImgDataReducer } from './bg-img-data.reducer';
+import { BgImg, bgImgFeatureKey, bgImgInitialState, bgImgReducer } from './bg-img.reducer';
 import { Cards, cardsFeatureKey, cardsInitialState, cardsReducer } from './card.reducer';
 import { Lists, listsFeatureKey, listsInitialState, listsReducer } from './list.reducer';
 import { Order, orderFeatureKey, orderInitialState, orderReducer } from './order.reducer';
 
 export interface State {
-  [bgImgDataFeatureKey]: BgImgData;
+  [bgImgFeatureKey]: BgImg;
   [listsFeatureKey]: Lists;
   [cardsFeatureKey]: Cards;
   [orderFeatureKey]: Order;
 }
 
 export const initialState: State = {
-  bgImgData: bgImgDataInitialState,
-  lists: listsInitialState,
-  cards: cardsInitialState,
-  order: orderInitialState,
+  [bgImgFeatureKey]: bgImgInitialState,
+  [listsFeatureKey]: listsInitialState,
+  [cardsFeatureKey]: cardsInitialState,
+  [orderFeatureKey]: orderInitialState,
 };
 
 export const reducers: ActionReducerMap<State> = {
-  [bgImgDataFeatureKey]: bgImgDataReducer,
+  [bgImgFeatureKey]: bgImgReducer,
   [listsFeatureKey]: listsReducer,
   [cardsFeatureKey]: cardsReducer,
   [orderFeatureKey]: orderReducer,
