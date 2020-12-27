@@ -7,9 +7,13 @@ import {
 
 import { environment } from '../../environments/environment';
 import { LocalstorageService } from '../services/localstorage.service';
+import * as BgImgActions from './bg-img.actions';
 import { BgImg, bgImgFeatureKey, bgImgInitialState, bgImgReducer } from './bg-img.reducer';
+import * as CardActions from './card.actions';
 import { Cards, cardsFeatureKey, cardsInitialState, cardsReducer } from './card.reducer';
+import * as ListActions from './list.actions';
 import { Lists, listsFeatureKey, listsInitialState, listsReducer } from './list.reducer';
+import * as OrderActions from './order.actions';
 import { Order, orderFeatureKey, orderInitialState, orderReducer } from './order.reducer';
 
 export interface State {
@@ -48,6 +52,32 @@ export const storeLocalstorage = (localstorageService: LocalstorageService): Met
   };
 };
 
+export const updateBackend = (): MetaReducer<State> => {
+  const actionTypesToUpdate: string[] = [
+    BgImgActions.gotData.type,
+    CardActions.addCard.type,
+    CardActions.deleteCard.type,
+    CardActions.deleteCards.type,
+    CardActions.updateCard.type,
+    ListActions.addList.type,
+    ListActions.deleteList.type,
+    ListActions.updateListTitle.type,
+    OrderActions.addCard.type,
+    OrderActions.addList.type,
+    OrderActions.deleteCard.type,
+    OrderActions.deleteList.type,
+    OrderActions.finishMoving.type,
+  ];
+  return (reducer: ActionReducer<State, Action>): ActionReducer<State, Action> => {
+    return (state, action) => {
+      if (actionTypesToUpdate.includes(action.type)) {
+        console.log(`Update backend: ${action.type}`);
+      }
+      return reducer(state, action);
+    };
+  };
+};
+
 export const getMetaReducers = (localstorageService: LocalstorageService): MetaReducer<State>[] => {
-  return [...metaReducers, storeLocalstorage(localstorageService)];
+  return [...metaReducers, storeLocalstorage(localstorageService), updateBackend()];
 };

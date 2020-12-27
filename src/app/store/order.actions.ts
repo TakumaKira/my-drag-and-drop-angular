@@ -33,3 +33,7 @@ export const moveCard = createAction(
   '[Order] Move Card',
   props<{ from: [number, number], to: [number, number] }>()
 );
+
+export const finishMoving = createAction(
+  '[Order] Finish Moving'
+);
