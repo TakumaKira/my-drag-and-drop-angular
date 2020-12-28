@@ -12,6 +12,11 @@ import { BgImg } from './bg-img.reducer';
 @Injectable()
 export class BgImgEffects {
 
+  getData$ = createEffect(() => this.actions$.pipe(
+    ofType(BgImgActions.getData),
+    map(() => BgImgActions.checkLocalStorage()),
+  ));
+
   checkLocalStorage$ = createEffect(() => this.actions$.pipe(
     ofType(BgImgActions.checkLocalStorage),
     mergeMap(() => this.unsplash.getStored()),

@@ -3,8 +3,8 @@ import { select, Store } from '@ngrx/store';
 import isEqual from 'lodash/isEqual';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, filter, first, map } from 'rxjs/operators';
-import { v4 as uuidv4 } from 'uuid';
 
+import { IdService } from './services/id.service';
 import { UnsplashService } from './services/unsplash.service';
 import { State } from './store';
 import * as BgImgActions from './store/bg-img.actions';
@@ -17,7 +17,7 @@ import { List } from './store/list.model';
 import { selectListEntity } from './store/list.selectors';
 import * as OrderActions from './store/order.actions';
 import { OrderList } from './store/order.reducer';
-import { selectOrderLists } from './store/order.selectors';
+import { selectOrderLists, selectOrderState } from './store/order.selectors';
 import { IUnsplashImgData } from './types/unsplash-img-data.model';
 
 @Component({
@@ -28,12 +28,11 @@ import { IUnsplashImgData } from './types/unsplash-img-data.model';
 export class AppComponent implements OnInit {
   @HostBinding('style.backgroundImage') backgroundImage = '';
   bgImgData: IUnsplashImgData | null = null;
-  draggingList: number | null = null;
-  draggingCard: [number, number] | null = null;
   orderList$: Observable<OrderList[]>;
   constructor(
     public unsplash: UnsplashService,
     private store: Store<State>,
+    private id: IdService,
   ) {
     this.orderList$ = this.store.pipe(
       select(selectOrderLists),
@@ -49,17 +48,17 @@ export class AppComponent implements OnInit {
       this.bgImgData = bgImgData;
       this.backgroundImage = `url("${this.bgImgData?.urls.full}")`;
     });
-    this.store.dispatch(BgImgActions.checkLocalStorage());
+    this.store.dispatch(BgImgActions.getData());
   }
   addList(): void {
-    this.store.dispatch(ListActions.addList({ listId: uuidv4() }));
+    this.store.dispatch(ListActions.addList({ listId: this.id.get() }));
   }
   updateListTitle(e: Event, i: number): void {
     const elem = e.target as HTMLElement;
     const { textContent } = elem;
     if (!textContent) {
       if (confirm('Are you sure you want to delete this list?')) {
-        this.store.pipe(first(), select(selectOrderLists)).subscribe(lists =>
+        this.orderList$.pipe(first()).subscribe(lists =>
           this.store.dispatch(ListActions.deleteList({listId: lists[i].listId})));
       } else {
         this.store.pipe(first()).subscribe(state =>
@@ -67,57 +66,79 @@ export class AppComponent implements OnInit {
       }
       return;
     }
-    this.store.pipe(first(), select(selectOrderLists)).subscribe(lists =>
+    this.orderList$.pipe(first()).subscribe(lists =>
       this.store.dispatch(ListActions.updateListTitle({ listId: lists[i].listId, title: textContent })));
   }
   onDragStartList(i: number, e: DragEvent): void {
-    if (this.draggingCard) { return; }
-    this.draggingList = i;
-    ((e.target as HTMLElement).querySelector('.list-title') as HTMLElement).blur();
+    this.store.pipe(
+      first(),
+      select(selectOrderState),
+      filter(order => order.draggingCard === null),
+    ).subscribe(() => {
+      this.store.dispatch(OrderActions.updateMovingList({index: i}));
+      ((e.target as HTMLElement).querySelector('.list-title') as HTMLElement).blur();
+    });
   }
   onDragEnterList(i: number): void {
-    this.orderList$.pipe(
+    this.store.pipe(
       first(),
-      filter(() => !!this.draggingCard),
-      filter(orderList => orderList[i].cardIds.length === 0),
+      select(selectOrderState),
+      filter(order => order.draggingCard !== null),
+      filter(order => order.lists[i].cardIds.length === 0),
     ).subscribe(() => this.onDragEnterCard(i, 0));
-    if (this.draggingList === null) { return; }
-    if (this.draggingCard) { return; }
-    if (this.draggingList === i) { return; }
-    this.store.dispatch(OrderActions.moveList({from: (this.draggingList as number), to: i}));
-    this.draggingList = i;
+    this.store.pipe(
+      first(),
+      select(selectOrderState),
+      filter(order => order.draggingCard === null),
+      filter(order => order.draggingList !== null),
+      filter(order => order.draggingList !== i),
+    ).subscribe(() => {
+      this.store.dispatch(OrderActions.moveList({index: i}));
+      this.store.dispatch(OrderActions.updateMovingList({index: i}));
+    });
   }
   addCard(listIndex: number): void {
-    this.store.pipe(first(), select(selectOrderLists)).subscribe(lists =>
-      this.store.dispatch(CardActions.addCard({ cardId: uuidv4(), listId: lists[listIndex].listId })));
+    this.orderList$.pipe(first()).subscribe(lists =>
+      this.store.dispatch(CardActions.addCard({ cardId: this.id.get(), listId: lists[listIndex].listId })));
   }
   updateCard(e: Event, i: number, j: number): void {
-    if (this.draggingCard) { return; } // Prevent executing this when starting dragging a card(thus dragged card content remains)
-    const elem = e.target as HTMLElement;
-    const { textContent } = elem;
-    if (!textContent) {
-      if (confirm('Are you sure you want to delete this card?')) {
-        this.store.pipe(first(), select(selectOrderLists)).subscribe(lists =>
-          this.store.dispatch(CardActions.deleteCard({listId: lists[i].listId, cardId: lists[i].cardIds[j]})));
-      } else {
-        this.store.pipe(first()).subscribe(state =>
-          elem.textContent = state.cards.entities[state.order.lists[i].cardIds[j]]?.content as string);
+    this.store.pipe(
+      first(),
+      select(selectOrderState),
+      // tslint:disable-next-line:max-line-length
+      filter(order => order.draggingCard === null), // Prevent executing this when starting dragging a card(thus dragged card content remains)
+    ).subscribe(() => {
+      const elem = e.target as HTMLElement;
+      const { textContent } = elem;
+      if (!textContent) {
+        if (confirm('Are you sure you want to delete this card?')) {
+          this.orderList$.pipe(first()).subscribe(lists =>
+            this.store.dispatch(CardActions.deleteCard({listId: lists[i].listId, cardId: lists[i].cardIds[j]})));
+        } else {
+          this.store.pipe(first()).subscribe(state =>
+            elem.textContent = state.cards.entities[state.order.lists[i].cardIds[j]]?.content as string);
+        }
+        return;
       }
-      return;
-    }
-    this.store.pipe(first(), select(selectOrderLists)).subscribe(lists =>
-      this.store.dispatch(CardActions.updateCard({ cardId: lists[i].cardIds[j], contents: textContent })));
+      this.orderList$.pipe(first()).subscribe(lists =>
+        this.store.dispatch(CardActions.updateCard({ cardId: lists[i].cardIds[j], contents: textContent })));
+    });
   }
   onDragStartCard(i: number, j: number, e: DragEvent): void {
-    this.draggingCard = [i, j];
+    this.store.dispatch(OrderActions.updateMovingCard({index: [i, j]}));
     (e.target as HTMLElement).blur();
   }
   onDragEnterCard(i: number, j: number): void {
-    if (this.draggingList) { return; }
-    if (this.draggingCard === null) { return; }
-    if ((this.draggingCard as [number, number])[0] === i && (this.draggingCard as [number, number])[1] === j) { return; }
-    this.store.dispatch(OrderActions.moveCard({from: (this.draggingCard as [number, number]), to: [i, j]}));
-    this.draggingCard = [i, j];
+    this.store.pipe(
+      first(),
+      select(selectOrderState),
+      filter(order => order.draggingList === null),
+      filter(order => order.draggingCard !== null),
+      filter(order => (order.draggingCard as [number, number])[0] !== i || (order.draggingCard as [number, number])[1] !== j),
+    ).subscribe(() => {
+      this.store.dispatch(OrderActions.moveCard({index: [i, j]}));
+      this.store.dispatch(OrderActions.updateMovingCard({index: [i, j]}));
+    });
   }
   @HostListener('dragover', ['$event'])
   onDragOverList(e: DragEvent): void {
@@ -125,8 +146,7 @@ export class AppComponent implements OnInit {
   }
   @HostListener('dragend')
   onDragEndList(): void {
-    this.draggingList = null;
-    this.draggingCard = null;
+    this.store.dispatch(OrderActions.finishMoving());
   }
   trackByItems(index: number, item: OrderList): number {
     return index;

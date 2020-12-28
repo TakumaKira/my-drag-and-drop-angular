@@ -24,14 +24,24 @@ export const deleteCard = createAction(
   props<{ listId: string, cardId: string }>()
 );
 
+export const updateMovingList = createAction(
+  '[Order] Update Moving List',
+  props<{ index: number }>()
+);
+
 export const moveList = createAction(
   '[Order] Move List',
-  props<{ from: number, to: number }>()
+  props<{ index: number }>()
+);
+
+export const updateMovingCard = createAction(
+  '[Order] Update Moving Card',
+  props<{ index: [number, number] }>()
 );
 
 export const moveCard = createAction(
   '[Order] Move Card',
-  props<{ from: [number, number], to: [number, number] }>()
+  props<{ index: [number, number] }>()
 );
 
 export const finishMoving = createAction(
