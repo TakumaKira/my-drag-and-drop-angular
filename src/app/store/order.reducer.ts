@@ -64,7 +64,7 @@ export const orderReducer = createReducer(
     }
   ),
   on(OrderActions.moveList,
-    (state, {index}) => {
+    (state, {targetIndex: index}) => {
       state = copy(state);
       const draggingList = state.draggingList as number;
       const moved = state.lists.splice(draggingList, 1)[0];
@@ -80,7 +80,7 @@ export const orderReducer = createReducer(
     }
   ),
   on(OrderActions.moveCard,
-    (state, {index}) => {
+    (state, {targetIndex: index}) => {
       state = copy(state);
       const draggingCard = state.draggingCard as [number, number];
       const moved = state.lists[draggingCard[0]].cardIds.splice(draggingCard[1], 1)[0];

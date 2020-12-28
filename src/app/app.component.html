@@ -20,14 +20,12 @@
       contenteditable
       (focusout)="updateListTitle($event,i)"
     >{{ getListTitle$(list.listId) | async }}</div>
-    <div
+    <card
       *ngFor="let cardId of list.cardIds; let j = index"
-      contenteditable
-      draggable="true"
-      (dragstart)="onDragStartCard(i,j,$event)"
-      (dragenter)="onDragEnterCard(i,j)"
-      (focusout)="updateCard($event,i,j)"
-    >{{ getCardContent$(cardId) | async }}</div>
+      [listIndex]="i"
+      [cardIndex]="j"
+      [cardId]="cardId"
+    ></card>
     <div
       (click)="addCard(i)"
     >Add Card</div>

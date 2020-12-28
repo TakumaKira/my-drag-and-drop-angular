@@ -31,7 +31,7 @@ export const updateMovingList = createAction(
 
 export const moveList = createAction(
   '[Order] Move List',
-  props<{ index: number }>()
+  props<{ targetIndex: number }>()
 );
 
 export const updateMovingCard = createAction(
@@ -41,7 +41,7 @@ export const updateMovingCard = createAction(
 
 export const moveCard = createAction(
   '[Order] Move Card',
-  props<{ index: [number, number] }>()
+  props<{ targetIndex: [number, number] }>()
 );
 
 export const finishMoving = createAction(

@@ -93,40 +93,13 @@ export class AppComponent implements OnInit {
       filter(order => order.draggingList !== null),
       filter(order => order.draggingList !== i),
     ).subscribe(() => {
-      this.store.dispatch(OrderActions.moveList({index: i}));
+      this.store.dispatch(OrderActions.moveList({targetIndex: i}));
       this.store.dispatch(OrderActions.updateMovingList({index: i}));
     });
   }
   addCard(listIndex: number): void {
     this.orderList$.pipe(first()).subscribe(lists =>
       this.store.dispatch(CardActions.addCard({ cardId: this.id.get(), listId: lists[listIndex].listId })));
-  }
-  updateCard(e: Event, i: number, j: number): void {
-    this.store.pipe(
-      first(),
-      select(selectOrderState),
-      // tslint:disable-next-line:max-line-length
-      filter(order => order.draggingCard === null), // Prevent executing this when starting dragging a card(thus dragged card content remains)
-    ).subscribe(() => {
-      const elem = e.target as HTMLElement;
-      const { textContent } = elem;
-      if (!textContent) {
-        if (confirm('Are you sure you want to delete this card?')) {
-          this.orderList$.pipe(first()).subscribe(lists =>
-            this.store.dispatch(CardActions.deleteCard({listId: lists[i].listId, cardId: lists[i].cardIds[j]})));
-        } else {
-          this.store.pipe(first()).subscribe(state =>
-            elem.textContent = state.cards.entities[state.order.lists[i].cardIds[j]]?.content as string);
-        }
-        return;
-      }
-      this.orderList$.pipe(first()).subscribe(lists =>
-        this.store.dispatch(CardActions.updateCard({ cardId: lists[i].cardIds[j], contents: textContent })));
-    });
-  }
-  onDragStartCard(i: number, j: number, e: DragEvent): void {
-    this.store.dispatch(OrderActions.updateMovingCard({index: [i, j]}));
-    (e.target as HTMLElement).blur();
   }
   onDragEnterCard(i: number, j: number): void {
     this.store.pipe(
@@ -136,7 +109,7 @@ export class AppComponent implements OnInit {
       filter(order => order.draggingCard !== null),
       filter(order => (order.draggingCard as [number, number])[0] !== i || (order.draggingCard as [number, number])[1] !== j),
     ).subscribe(() => {
-      this.store.dispatch(OrderActions.moveCard({index: [i, j]}));
+      this.store.dispatch(OrderActions.moveCard({targetIndex: [i, j]}));
       this.store.dispatch(OrderActions.updateMovingCard({index: [i, j]}));
     });
   }
@@ -157,14 +130,6 @@ export class AppComponent implements OnInit {
       select(selectListEntity(listId)),
       filter(list => !!list),
       map(list => (list as List).title),
-    );
-  }
-  getCardContent$(cardId: string): Observable<string> {
-    return this.store.pipe(
-      first(),
-      select(selectCardEntity(cardId)),
-      filter(card => !!card),
-      map(card => (card as Card).content),
     );
   }
 }
