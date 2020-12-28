@@ -26,6 +26,7 @@ export class CardComponent {
   @ViewChild('content') content!: ElementRef<HTMLDivElement>;
 
   private orderList$: Observable<OrderList[]>;
+  private mouseIsDown = false;
 
   constructor(
     private store: Store<State>,
@@ -35,29 +36,31 @@ export class CardComponent {
       distinctUntilChanged(isEqual),
     );
   }
+  @HostListener('mousedown')
+  onMouseDown(): void {
+    this.content.nativeElement.focus(); // prevent blur when content is already focused
+    this.mouseIsDown = true;
+  }
+  @HostListener('mousemove')
+  onMouseMove(): void {
+    if (this.mouseIsDown) {
+      this.content.nativeElement.style.pointerEvents = 'none'; // disable edit to enable drag
+    }
+  }
+  @HostListener('mouseup')
+  onMouseUp(): void {
+    this.mouseIsDown = false;
+  }
   @HostListener('click')
   onClick(): void {
     this.content.nativeElement.focus();
+    this.content.nativeElement.style.pointerEvents = 'auto'; // enable text selector
   }
-  @HostListener('dragstart')
-  onDragStart(): void {
-    this.store.dispatch(OrderActions.updateMovingCard({index: [this.listIndex, this.cardIndex]}));
+  focusout(): void {
+    this.content.nativeElement.style.pointerEvents = 'none';
+    this.updateCardContent();
   }
-  @HostListener('dragenter')
-  onDragEnter(): void {
-    this.store.pipe(
-      first(),
-      select(selectOrderState),
-      filter(order => order.draggingList === null),
-      filter(order => order.draggingCard !== null),
-      // tslint:disable-next-line:max-line-length
-      filter(order => (order.draggingCard as [number, number])[0] !== this.listIndex || (order.draggingCard as [number, number])[1] !== this.cardIndex),
-    ).subscribe(() => {
-      this.store.dispatch(OrderActions.moveCard({targetIndex: [this.listIndex, this.cardIndex]}));
-      this.store.dispatch(OrderActions.updateMovingCard({index: [this.listIndex, this.cardIndex]}));
-    });
-  }
-  updateCardContent(): void {
+  private updateCardContent(): void {
     this.store.pipe(
       first(),
       select(selectOrderState),
@@ -79,6 +82,24 @@ export class CardComponent {
       }
       this.orderList$.pipe(first()).subscribe(lists =>
         this.store.dispatch(CardActions.updateCard({ cardId: lists[this.listIndex].cardIds[this.cardIndex], contents: textContent })));
+    });
+  }
+  @HostListener('dragstart')
+  onDragStart(): void {
+    this.store.dispatch(OrderActions.updateMovingCard({index: [this.listIndex, this.cardIndex]}));
+  }
+  @HostListener('dragenter')
+  onDragEnter(): void {
+    this.store.pipe(
+      first(),
+      select(selectOrderState),
+      filter(order => order.draggingList === null),
+      filter(order => order.draggingCard !== null),
+      // tslint:disable-next-line:max-line-length
+      filter(order => (order.draggingCard as [number, number])[0] !== this.listIndex || (order.draggingCard as [number, number])[1] !== this.cardIndex),
+    ).subscribe(() => {
+      this.store.dispatch(OrderActions.moveCard({targetIndex: [this.listIndex, this.cardIndex]}));
+      this.store.dispatch(OrderActions.updateMovingCard({index: [this.listIndex, this.cardIndex]}));
     });
   }
   getCardContent$(cardId: string): Observable<string> {
