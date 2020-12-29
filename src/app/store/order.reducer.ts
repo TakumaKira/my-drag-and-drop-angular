@@ -7,6 +7,8 @@ export const orderFeatureKey = 'order';
 
 export interface Order {
   lists: OrderList[];
+  draggingList: number | null;
+  draggingCard: [number, number] | null;
 }
 export interface OrderList {
   listId: string;
@@ -15,6 +17,8 @@ export interface OrderList {
 
 export const orderInitialState: Order = {
   lists: [],
+  draggingList: null,
+  draggingCard: null,
 };
 
 
@@ -52,19 +56,43 @@ export const orderReducer = createReducer(
       return state;
     }
   ),
-  on(OrderActions.moveList,
-    (state, action) => {
+  on(OrderActions.updateMovingList,
+    (state, {index}) => {
       state = copy(state);
-      const moved = state.lists.splice(action.from, 1)[0];
-      state.lists.splice(action.to, 0, moved);
+      state.draggingList = index;
+      return state;
+    }
+  ),
+  on(OrderActions.moveList,
+    (state, {targetIndex: index}) => {
+      state = copy(state);
+      const draggingList = state.draggingList as number;
+      const moved = state.lists.splice(draggingList, 1)[0];
+      state.lists.splice(index, 0, moved);
+      return state;
+    }
+  ),
+  on(OrderActions.updateMovingCard,
+    (state, {index}) => {
+      state = copy(state);
+      state.draggingCard = index;
       return state;
     }
   ),
   on(OrderActions.moveCard,
+    (state, {targetIndex: index}) => {
+      state = copy(state);
+      const draggingCard = state.draggingCard as [number, number];
+      const moved = state.lists[draggingCard[0]].cardIds.splice(draggingCard[1], 1)[0];
+      state.lists[index[0]].cardIds.splice(index[1], 0, moved);
+      return state;
+    }
+  ),
+  on(OrderActions.finishMoving,
     (state, action) => {
       state = copy(state);
-      const moved = state.lists[action.from[0]].cardIds.splice(action.from[1], 1)[0];
-      state.lists[action.to[0]].cardIds.splice(action.to[1], 0, moved);
+      state.draggingList = null;
+      state.draggingCard = null;
       return state;
     }
   ),

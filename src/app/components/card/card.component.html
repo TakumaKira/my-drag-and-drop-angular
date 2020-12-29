@@ -1,0 +1,6 @@
+<div
+  #content
+  contenteditable
+  (focusout)="focusout()"
+  style="pointer-events: none;"
+>{{ getCardContent$(cardId) | async }}</div>

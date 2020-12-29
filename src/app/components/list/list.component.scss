@@ -1,0 +1,13 @@
+:host {
+  height: 100vh;
+
+  .list {
+    width: 250px;
+    margin: 50px 25px;
+    background-color: red;
+  }
+
+  &:first-of-type .list {
+    margin-left: 50px;
+  }
+}

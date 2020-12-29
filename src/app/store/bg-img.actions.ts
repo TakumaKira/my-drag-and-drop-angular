@@ -2,6 +2,10 @@ import { createAction, props } from '@ngrx/store';
 
 import { BgImg } from './bg-img.reducer';
 
+export const getData = createAction(
+  '[BgImg] Get Data',
+);
+
 export const checkLocalStorage = createAction(
   '[BgImg] Check Local Storage',
 );
