@@ -1,9 +1,5 @@
 import { createAction, props } from '@ngrx/store';
 
-export const loadOrders = createAction(
-  '[Order] Load Orders'
-);
-
 export const addList = createAction(
   '[Order] Add List',
   props<{ listId: string }>()

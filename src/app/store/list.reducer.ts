@@ -23,32 +23,11 @@ export const listsReducer = createReducer(
   on(ListActions.addList,
     (state, {listId: id}) => adapter.addOne({id, title: NEW_LIST_TITLE}, state)
   ),
-  on(ListActions.upsertList,
-    (state, action) => adapter.upsertOne(action.list, state)
-  ),
-  on(ListActions.addLists,
-    (state, action) => adapter.addMany(action.lists, state)
-  ),
-  on(ListActions.upsertLists,
-    (state, action) => adapter.upsertMany(action.lists, state)
-  ),
   on(ListActions.updateListTitle,
     (state, {listId: id, title}) => adapter.updateOne({id, changes: { title }}, state)
   ),
-  on(ListActions.updateLists,
-    (state, action) => adapter.updateMany(action.lists, state)
-  ),
   on(ListActions.deleteList,
     (state, {listId}) => adapter.removeOne(listId, state)
-  ),
-  on(ListActions.deleteLists,
-    (state, action) => adapter.removeMany(action.ids, state)
-  ),
-  on(ListActions.loadLists,
-    (state, action) => adapter.setAll(action.lists, state)
-  ),
-  on(ListActions.clearLists,
-    state => adapter.removeAll(state)
   ),
 );
 

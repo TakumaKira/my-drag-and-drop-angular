@@ -23,32 +23,14 @@ export const cardsReducer = createReducer(
   on(CardActions.addCard,
     (state, {cardId: id}) => adapter.addOne({id, content: NEW_CARD_CONTENTS}, state)
   ),
-  on(CardActions.upsertCard,
-    (state, action) => adapter.upsertOne(action.card, state)
-  ),
-  on(CardActions.addCards,
-    (state, action) => adapter.addMany(action.cards, state)
-  ),
-  on(CardActions.upsertCards,
-    (state, action) => adapter.upsertMany(action.cards, state)
-  ),
   on(CardActions.updateCard,
     (state, {cardId: id, contents}) => adapter.updateOne({ id, changes: { content: contents } }, state)
   ),
-  on(CardActions.updateCards,
-    (state, action) => adapter.updateMany(action.cards, state)
-  ),
   on(CardActions.deleteCard,
-    (state, action) => adapter.removeOne(action.cardId, state)
+    (state, {cardId}) => adapter.removeOne(cardId, state)
   ),
   on(CardActions.deleteCards,
-    (state, action) => adapter.removeMany(action.cardIds, state)
-  ),
-  on(CardActions.loadCards,
-    (state, action) => adapter.setAll(action.cards, state)
-  ),
-  on(CardActions.clearCards,
-    state => adapter.removeAll(state)
+    (state, {cardIds}) => adapter.removeMany(cardIds, state)
   ),
 );
 
