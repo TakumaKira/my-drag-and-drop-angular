@@ -5,32 +5,11 @@
   Photo by <a [href]="unsplash.unsplashUrl + '@' + bgImgData.user.username + unsplash.query">{{bgImgData.user.name}}</a> on <a [href]="unsplash.unsplashUrl + unsplash.query">Unsplash</a>
 </p>
 
-<div
+<list
   *ngFor="let list of orderList$ | async; let i = index; trackBy: trackByItems"
-  class="list-wrapper"
-  (dragenter)="onDragEnterList(i)"
->
-  <div
-    class="list"
-    draggable="true"
-    (dragstart)="onDragStartList(i,$event)"
-  >
-    <div
-      class="list-title"
-      contenteditable
-      (focusout)="updateListTitle($event,i)"
-    >{{ getListTitle$(list.listId) | async }}</div>
-    <card
-      *ngFor="let cardId of list.cardIds; let j = index"
-      [listIndex]="i"
-      [cardIndex]="j"
-      [cardId]="cardId"
-    ></card>
-    <div
-      (click)="addCard(i)"
-    >Add Card</div>
-  </div>
-</div>
+  [listIndex]="i"
+  [list]="list"
+></list>
 
 <div class="list-wrapper">
   <div

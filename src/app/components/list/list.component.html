@@ -1,0 +1,20 @@
+<div
+  class="list"
+  draggable="true"
+  (dragstart)="onDragStartList($event)"
+>
+  <div
+    class="list-title"
+    contenteditable
+    (focusout)="updateListTitle($event)"
+  >{{ getListTitle$(list.listId) | async }}</div>
+  <card
+    *ngFor="let cardId of list.cardIds; let j = index"
+    [listIndex]="listIndex"
+    [cardIndex]="j"
+    [cardId]="cardId"
+  ></card>
+  <div
+    (click)="addCard()"
+  >Add Card</div>
+</div>

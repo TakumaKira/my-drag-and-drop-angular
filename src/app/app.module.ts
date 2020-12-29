@@ -16,6 +16,7 @@ import { BgImgEffects } from './store/bg-img.effects';
 import { CardEffects } from './store/card.effects';
 import { ListEffects } from './store/list.effects';
 import { CardComponent } from './components/card/card.component';
+import { ListComponent } from './components/list/list.component';
 
 // configure Bugsnag asap
 Bugsnag.start({ apiKey: process.env.BUGSNAG_API_KEY as string });
@@ -27,7 +28,8 @@ export function errorHandlerFactory(): BugsnagErrorHandler {
 @NgModule({
   declarations: [
     AppComponent,
-    CardComponent
+    CardComponent,
+    ListComponent
   ],
   imports: [
     BrowserModule,
