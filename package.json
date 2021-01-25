@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "test:circle-ci": "ng test --no-watch --no-progress --browsers ChromeHeadlessCI",
-    "e2e:circle-ci": "ng e2e --protractor-config=e2e/protractor-ci.conf.js"
+    "e2e:circle-ci": "ng e2e --protractor-config=e2e/protractor-ci.conf.js --webdriver-update=false"
   },
   "private": true,
   "dependencies": {
@@ -55,7 +55,7 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
-    "protractor": "~7.0.0",
+    "protractor": "^7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~4.0.2"

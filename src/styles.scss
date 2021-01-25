@@ -10,3 +10,11 @@ body {
   margin: 0;
   display: flex;
 }
+
+.list {
+  width: 250px;
+  margin: 50px 25px;
+  background-color: hsla(0, 0%, 80%, 0.8);
+  border-radius: 2px;
+  box-shadow: 2px 2px 5px 1px hsla(0, 0%, 0%, 0.2);
+}
