@@ -1,13 +1,21 @@
 :host {
   height: 100vh;
 
-  .list {
-    width: 250px;
-    margin: 50px 25px;
-    background-color: red;
-  }
-
   &:first-of-type .list {
     margin-left: 50px;
   }
+}
+
+.list-title {
+  font-size: 21px;
+  padding: 5px 10px 0;
+}
+
+.spacer {
+  height: 7px;
+}
+
+.add-card {
+  font-size: 17px;
+  padding: 0 10px 9px;
 }

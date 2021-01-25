@@ -15,6 +15,11 @@
     [cardId]="cardId"
   ></card>
   <div
+    *ngIf="list.cardIds.length === 0"
+    class="spacer"
+  ></div>
+  <div
+    class="add-card"
     (click)="addCard()"
-  >Add Card</div>
+  >+ Add Card</div>
 </div>
