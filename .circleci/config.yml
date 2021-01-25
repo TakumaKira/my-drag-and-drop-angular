@@ -10,7 +10,7 @@ jobs:
       - run:
           command: npm run test:circle-ci
       - run:
-          command: npm run e2e:circle-ci
+          command: node node_modules/.bin/webdriver-manager update --versions.chrome=87.0.4280.88 && npm run e2e:circle-ci
   deploy_dev:
     docker:
       - image: circleci/node:14.15.1
